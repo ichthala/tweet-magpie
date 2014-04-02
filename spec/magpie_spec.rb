@@ -1,8 +1,15 @@
 require 'spec_helper'
-require 'twitter'
 
 describe Magpie do
-  let(:five_tweets) { [double(id: 6), double(id: 5), double(id: 4), double(id: 3), double(id: 2)] }
+  let(:five_tweets) {
+    [
+      instance_double('Tweet', id: 6),
+      instance_double('Tweet', id: 5),
+      instance_double('Tweet', id: 4),
+      instance_double('Tweet', id: 3),
+      instance_double('Tweet', id: 2)
+    ]
+  }
   let(:username) { 'ichthala' }
   let(:client) { double('twitter') }
 
@@ -23,7 +30,7 @@ describe Magpie do
       it 'pages through a user\'s tweets' do
         @client.should_receive(:user_timeline)
           .with(username, max_id: 6, include_rts: false, count: 200)
-          .and_return(five_tweets)
+          .and_return(instance_double("Tweet", id: 6))
 
         @client.should_receive(:user_timeline)
           .with(username, max_id: 1, include_rts: false, count: 200)
