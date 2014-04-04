@@ -39,8 +39,7 @@ class Magpie
       exit
     end
 
-    max_id = tweets[-1].id
-    puts max_id
+    @max_id = tweets[-1].id - 1 unless tweets.empty?
     tweets == [] ? false : tweets
   end
 

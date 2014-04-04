@@ -1,13 +1,14 @@
 require 'spec_helper'
+require 'twitter'
 
 describe Magpie do
   let(:five_tweets) {
     [
-      instance_double('Tweet', id: 6),
-      instance_double('Tweet', id: 5),
-      instance_double('Tweet', id: 4),
-      instance_double('Tweet', id: 3),
-      instance_double('Tweet', id: 2)
+      instance_double(Twitter::Tweet, :id => 6),
+      instance_double(Twitter::Tweet, :id => 5),
+      instance_double(Twitter::Tweet, :id => 4),
+      instance_double(Twitter::Tweet, :id => 3),
+      instance_double(Twitter::Tweet, :id => 2)
     ]
   }
   let(:username) { 'ichthala' }
@@ -30,7 +31,7 @@ describe Magpie do
       it 'pages through a user\'s tweets' do
         @client.should_receive(:user_timeline)
           .with(username, max_id: 6, include_rts: false, count: 200)
-          .and_return(instance_double("Tweet", id: 6))
+          .and_return(five_tweets)
 
         @client.should_receive(:user_timeline)
           .with(username, max_id: 1, include_rts: false, count: 200)
@@ -39,7 +40,7 @@ describe Magpie do
         @magpie.max_id = 6
         @magpie.get_page_of_tweets
 
-        expect(@magpie.max_id).to eq 2
+        expect(@magpie.max_id).to eq 1
 
         expect(@magpie.get_page_of_tweets).to eq false
       end
@@ -47,13 +48,16 @@ describe Magpie do
 
     context 'when a Twitter error is encountered' do
       it 'exits gracefully' do
-        @client.stub(:user_timeline).and_return(Twitter::Error::TooManyRequests)
+        @client.should_receive(:user_timeline).and_raise(Twitter::Error::TooManyRequests)
         # xxx i don't like that i have to set max_id before testing
         @magpie.max_id = 1
         @magpie.get_page_of_tweets
         # i also don't like that there's no explicit expectation
       end
     end
+  end
+
+  describe '#get_all_tweets' do
   end
 
 end

@@ -1,6 +1,6 @@
-require 'twitter'
-require 'pry'
-require 'dotenv'
+require 'rubygems'
+require 'bundler/setup'
+Bundler.require(:default)
 
 client = Twitter::REST::Client.new do |config|
   config.consumer_key        = ENV['YOUR_CONSUMER_KEY'],
